@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Order Status</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+.step.active{
+  background: linear-gradient(to right,#ef4444,#f97316);
+  color:white;
+}
+</style>
+</head>
+
+<body class="bg-gradient-to-br from-[#FFF5EF] to-[#FFE4D9] min-h-screen">
+
+<div class="max-w-3xl mx-auto p-6">
+
+<!-- HEADER -->
+<div class="bg-white rounded-xl shadow p-6 mb-6 text-center">
+  <h1 class="text-2xl font-bold text-red-500">🍽 Order Status</h1>
+  <p class="text-sm text-gray-600 mt-1">
+    Order ID: <b>#{{ order.id }}</b>
+  </p>
+</div>
+
+<!-- CUSTOMER INFO -->
+<div class="bg-white rounded-xl shadow p-4 mb-6 flex justify-between text-sm">
+  <p>👤 <b>{{ order.customer_name }}</b></p>
+  <p>🪑 Table: <b>{{ order.table_name }}</b></p>
+</div>
+
+<!-- STATUS STEPS -->
+<div class="bg-white rounded-xl shadow p-6 mb-6">
+  <h2 class="font-bold mb-4 text-center">Order Progress</h2>
+
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center text-sm">
+    {% set s = order.status %}
+    <div class="step p-3 rounded {% if s in ['Pending','Accepted','Cooking','Done'] %}active{% endif %}">
+      ⏳ Pending
+    </div>
+    <div class="step p-3 rounded {% if s in ['Accepted','Cooking','Done'] %}active{% endif %}">
+      ✅ Accepted
+    </div>
+    <div class="step p-3 rounded {% if s in ['Cooking','Done'] %}active{% endif %}">
+      🔥 Cooking
+    </div>
+    <div class="step p-3 rounded {% if s == 'Done' %}active{% endif %}">
+      🍽 Done
+    </div>
+  </div>
+
+  {% if s == "Cancelled" %}
+  <p class="text-center text-red-600 font-bold mt-4">
+    ❌ Order Cancelled
+  </p>
+  {% endif %}
+</div>
+
+<!-- ITEMS -->
+<div class="bg-white rounded-xl shadow p-6 mb-6">
+  <h2 class="font-bold mb-4">Ordered Items</h2>
+
+  <ul class="space-y-2 text-sm">
+    {% for name, d in items.items() %}
+    <li class="flex justify-between bg-[#FFF1EC] px-3 py-2 rounded">
+      {{ name }} × {{ d.qty }}
+      <span>₹{{ d.qty * d.price }}</span>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+
+<!-- BILL -->
+<div class="bg-white rounded-xl shadow p-6 text-sm">
+  <p>Subtotal: ₹{{ order.subtotal }}</p>
+  <p>Discount: ₹{{ order.discount }}</p>
+  <p>GST: ₹{{ order.gst }}</p>
+  <p class="font-bold text-lg mt-2">
+    Total: ₹{{ order.total }}
+  </p>
+</div>
+
+<!-- REFRESH -->
+<div class="text-center mt-6">
+  <button onclick="location.reload()"
+   class="bg-red-500 text-white px-6 py-2 rounded-full shadow">
+   🔄 Refresh Status
+  </button>
+</div>
+
+</div>
+
+</body>
+</html>

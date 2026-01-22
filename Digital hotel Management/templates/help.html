@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Help & Support</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gradient-to-br from-blue-50 to-purple-50 min-h-screen">
+
+<!-- HEADER -->
+<div class="bg-gradient-to-r from-indigo-500 to-purple-500 text-white p-6 text-center shadow">
+  <h1 class="text-3xl font-bold">🆘 Help & Support</h1>
+  <p class="opacity-90 mt-1">We are here to help you 🍽️</p>
+</div>
+
+<!-- QUICK HELP -->
+<div class="max-w-5xl mx-auto p-4 grid grid-cols-2 sm:grid-cols-3 gap-4 mt-6">
+  <button class="help-btn">🍽 Order Issue</button>
+  <button class="help-btn">💳 Payment Issue</button>
+  <button class="help-btn">⏱ Order Delay</button>
+  <button class="help-btn">🧾 Bill / GST</button>
+  <button class="help-btn">❌ Cancel Order</button>
+  <button class="help-btn">⭐ Review Help</button>
+</div>
+
+<!-- FORM -->
+<div class="max-w-xl mx-auto bg-white rounded-2xl shadow-lg p-6 mt-8">
+  <h2 class="text-xl font-semibold mb-4 text-center">📩 Send your issue</h2>
+
+  <form id="helpForm" enctype="multipart/form-data" class="space-y-3">
+    <input name="name" placeholder="Your Name" required
+      class="w-full border p-2 rounded">
+
+    <input name="table" placeholder="Table No" required
+      class="w-full border p-2 rounded">
+
+    <select name="issue" required class="w-full border p-2 rounded">
+      <option value="">Select Issue</option>
+      <option>Order Issue</option>
+      <option>Payment Issue</option>
+      <option>Order Delay</option>
+      <option>Bill / GST</option>
+      <option>Cancel Order</option>
+      <option>Other</option>
+    </select>
+
+    <textarea name="message" rows="3"
+      placeholder="Explain your issue..."
+      class="w-full border p-2 rounded"></textarea>
+
+    <input type="file" name="image" class="w-full">
+
+    <button
+      class="w-full bg-gradient-to-r from-indigo-500 to-purple-500
+      text-white py-2 rounded font-semibold hover:opacity-90">
+      Submit Request
+    </button>
+  </form>
+
+  <p id="msg" class="text-green-600 text-center mt-3 hidden">
+    ✅ Your request has been sent. We will contact you soon.
+  </p>
+</div>
+
+<!-- FOOTER -->
+<div class="text-center text-sm text-gray-500 mt-10 pb-6">
+  📞 Kitchen: +91 9876543210 <br>
+  📧 support@hoteldigital.com
+</div>
+
+<script>
+document.getElementById("helpForm").onsubmit = function(e){
+  e.preventDefault();
+  const formData = new FormData(this);
+
+  fetch("/help", { method:"POST", body:formData })
+  .then(r=>r.json())
+  .then(d=>{
+    if(d.success){
+      document.getElementById("msg").classList.remove("hidden");
+      this.reset();
+    }
+  });
+}
+</script>
+
+<style>
+.help-btn{
+  background:white;
+  padding:14px;
+  border-radius:14px;
+  font-weight:600;
+  box-shadow:0 8px 20px rgba(0,0,0,.08);
+  transition:.2s;
+}
+.help-btn:hover{
+  transform:translateY(-2px);
+  background:#f5f5ff;
+}
+</style>
+
+</body>
+</html>

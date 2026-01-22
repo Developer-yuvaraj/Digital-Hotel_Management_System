@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Dish Analytics</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<style>
+  #view{
+    position: relative;
+    left: 300px;
+    color: white;
+    background-color: blue;
+    padding: 15px;
+    }
+</style>
+<body class="bg-gradient-to-br from-blue-50 to-purple-50 p-6">
+<!-- ADMIN NAVBAR -->
+<header class="sticky top-0 z-50 bg-gradient-to-r from-red-600 to-orange-500 shadow-lg">
+  <div class="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
+
+    <!-- LEFT : LOGO + NAV -->
+    <div class="flex items-center gap-6 text-white font-semibold">
+      <span class="text-xl">🛠 Admin Panel</span>
+
+      <a href="/admin"
+        class="px-3 py-1 rounded hover:bg-white/20 transition">
+        🏠 Dashboard
+      </a>
+
+      <a href="/admin/menu"
+        class="px-3 py-1 rounded hover:bg-white/20 transition">
+        🍽 Manage Menu
+      </a>
+
+      <a href="/admin/analytics"
+        class="px-3 py-1 rounded hover:bg-white/20 transition">
+        📊 Analytics
+      </a>
+    </div>
+
+   
+</header>
+
+<div class="max-w-xl mx-auto bg-white p-6 rounded-xl shadow">
+<h2 class="text-xl font-bold mb-4">📊 Dish Analytics</h2>
+
+<form method="POST">
+  <select name="dish">
+    {% for d in dish_names %}
+      <option value="{{ d }}">{{ d }}</option>
+    {% endfor %}
+  </select>
+  <button type="submit" id="view">View</button>
+</form>
+
+
+
+
+{% if result %}
+<div class="space-y-2 text-lg">
+  <p>🍽 Dish: <b>{{ result.dish }}</b></p>
+  <p>📦 Sold Qty: <b>{{ result.qty }}</b></p>
+  <p>💰 Revenue: ₹{{ result.revenue }}</p>
+  <p>🏷 Discount: ₹{{ result.discount }}</p>
+  <p class="font-bold text-green-600">
+    Profit: ₹{{ result.profit }}
+  </p>
+</div>
+{% endif %}
+
+</div>
+
+</body>
+</html>

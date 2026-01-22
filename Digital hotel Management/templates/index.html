@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Hotel Digital Ordering System</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<link rel="stylesheet"
+ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+/* NAV */
+.nav-link{
+  position:relative;
+  padding-bottom:4px;
+}
+.nav-link::after{
+  content:"";
+  position:absolute;
+  left:0;
+  bottom:0;
+  width:0;
+  height:2px;
+  background:#E23744;
+  transition:.3s;
+}
+.nav-link:hover::after,
+.nav-link.active::after{width:100%;}
+
+/* BUTTON */
+.btn-primary{
+  background:linear-gradient(to right,#E23744,#FF7A18);
+  color:white;
+  padding:12px 30px;
+  border-radius:999px;
+  font-weight:600;
+  transition:.3s;
+}
+.btn-primary:hover{transform:scale(1.05);}
+
+/* REVIEW */
+.review-card{
+  background:#FFF8F3;
+  padding:22px;
+  border-radius:18px;
+  box-shadow:0 10px 25px rgba(0,0,0,.12);
+}
+</style>
+</head>
+
+<body class="scroll-smooth text-[#1F2937]
+bg-gradient-to-br from-[#FDEFEA] via-[#FFF1EC] to-[#FFF8F3]">
+
+<!-- NAVBAR -->
+<header class="sticky top-0 z-50 bg-white/90 backdrop-blur shadow">
+  <nav class="max-w-7xl mx-auto flex items-center justify-between p-4">
+    <h1 class="text-xl font-bold text-[#E23744]">🍽 Hotel Digital</h1>
+
+    <ul class="hidden md:flex gap-6 font-medium">
+      <li><a class="nav-link active" href="/index">Home</a></li>
+      <li><a class="nav-link" href="/menu">Menus</a></li>
+      <li><a class="nav-link" href="/reviews">Reviews</a></li>
+      <li><a class="nav-link" href="/help">Help</a></li>
+    </ul>
+
+    <button onclick="toggleMenu()" class="md:hidden text-2xl">
+      <i class="fas fa-bars"></i>
+    </button>
+  </nav>
+
+  <div id="mobileMenu" class="hidden bg-white">
+    <ul class="flex flex-col items-center gap-4 py-4 font-medium">
+      <li><a class="nav-link active" href="/index">Home</a></li>
+      <li><a class="nav-link" href="/menu">Menus</a></li>
+      <li><a class="nav-link" href="reviews">Reviews</a></li>
+      <li><a class="nav-link" href="/help">Help</a></li>
+    </ul>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="max-w-7xl mx-auto grid md:grid-cols-2 gap-10 items-center p-10">
+  <div>
+    <h2 class="text-4xl font-extrabold mb-4">
+      QR-Based Smart Food Ordering
+    </h2>
+    <p class="mb-6 text-lg text-gray-700">
+      Scan the QR code on your table, explore menu,
+      place order and enjoy your food.
+    </p>
+    <a href="#" class="btn-primary">Explore Menu</a>
+  </div>
+
+  <img src="https://images.unsplash.com/photo-1600891964599-f61ba0e24092"
+       class="rounded-3xl shadow-xl">
+</section>
+
+<!-- FLOW -->
+<section class="py-14 bg-[#CFFFE5]">
+  <div class="max-w-6xl mx-auto grid md:grid-cols-3 gap-8 p-6 text-center font-semibold">
+    <div class="bg-white p-6 rounded-2xl shadow">📱 Scan QR</div>
+    <div class="bg-white p-6 rounded-2xl shadow">🍽 Select Food</div>
+    <div class="bg-white p-6 rounded-2xl shadow">👨‍🍳 Sent to Kitchen</div>
+  </div>
+</section>
+
+<!-- BANNER -->
+<section class="max-w-7xl mx-auto py-16">
+  <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836"
+       class="w-full rounded-3xl shadow-2xl">
+</section>
+
+<!-- VEG / NONVEG -->
+<section class="max-w-7xl mx-auto py-16">
+  <div class="grid md:grid-cols-2 gap-12 p-6 text-center">
+
+    <div class="bg-white rounded-3xl p-6 shadow-xl">
+      <span class="text-[#9F1239] font-bold">NON-VEG SPECIAL</span>
+      <h3 class="text-2xl font-bold my-3">Spicy & Juicy 🍗</h3>
+      <a href="/menu">
+      <button class="btn-primary mb-5">Explore Non-Veg</button>
+      </a>
+      <img src="https://images.unsplash.com/photo-1625943555419-56a2cb596640"
+           class="rounded-2xl w-full h-64 object-cover">
+    </div>
+
+    <div class="bg-white rounded-3xl p-6 shadow-xl">
+      <span class="text-[#16A34A] font-bold">VEG DELIGHTS</span>
+      <h3 class="text-2xl font-bold my-3">Fresh & Healthy 🥗</h3>
+      <a href="/menu">
+      <button class="btn-primary mb-5">Explore Veg</button>
+      </a>
+      <img src="https://images.unsplash.com/photo-1546069901-eacef0df6022"
+           class="rounded-2xl w-full h-64 object-cover">
+    </div>
+
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="py-16 bg-white/70">
+  <h3 class="text-3xl font-extrabold text-center mb-12">⭐ Customer Reviews</h3>
+
+  <div class="max-w-7xl mx-auto grid md:grid-cols-3 gap-8 p-6">
+
+    <div class="review-card text-center">
+      <div class="text-[#FBBF24] text-xl mb-2">★★★★★</div>
+      <p>Very easy and smooth ordering.</p>
+      <span class="block mt-3 font-semibold text-[#E23744]">— Liza</span>
+    </div>
+
+    <div class="review-card text-center">
+      <div class="text-[#FBBF24] text-xl mb-2">★★★★☆</div>
+      <p>Clean UI and professional look.</p>
+      <span class="block mt-3 font-semibold text-[#FF7A18]">— Xiao</span>
+    </div>
+
+    <div class="review-card text-center">
+      <div class="text-[#FBBF24] text-xl mb-2">★★★★★</div>
+      <p>Feels like a real food startup.</p>
+      <span class="block mt-3 font-semibold text-[#9F1239]">— Lea</span>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="bg-[#1F2937] text-gray-300 mt-20">
+  <div class="max-w-7xl mx-auto flex justify-between p-10">
+    <div class="flex gap-6 text-2xl">
+      <i class="fab fa-instagram"></i>
+      <i class="fab fa-facebook"></i>
+      <i class="fab fa-twitter"></i>
+    </div>
+    <div class="flex flex-col gap-2 text-right">
+      <a href="/index" class="hover:text-white">Home</a>
+      <a href="/menu" class="hover:text-white">Menus</a>
+      <a href="/reviews" class="hover:text-white">Reviews</a>
+      <a href="/help" class="hover:text-white">Help</a>
+          <a href="/kitchen_login"
+       class="mt-2 text-green-400 font-semibold hover:text-green-300">
+       🔒 Kitchen Dashboard
+      </a>
+
+      <a href="/admin_login"
+       class="text-blue-400 font-semibold hover:text-blue-300">
+       🛠 Admin Dashboard
+      </a>
+    
+  </div>
+    </div>
+  </div>
+  
+  <div class="text-center border-t border-gray-700 py-4 text-sm">
+    © 2025 Hotel Digital Ordering System
+  </div>
+</footer>
+
+<script>
+function toggleMenu(){
+  document.getElementById("mobileMenu").classList.toggle("hidden");
+}
+</script>
+
+</body>
+</html>

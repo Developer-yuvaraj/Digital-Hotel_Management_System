@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<style>
+  .nav-btn{
+    padding: 10px 16px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.15);
+    text-align: center;
+    width: 100%;
+  }
+  @media(min-width:768px){
+    .nav-btn{ width:auto }
+  }
+</style>
+
+<body class="bg-gradient-to-br from-[#FFF5F5] to-[#F0F9FF]">
+
+<!-- HEADER -->
+
+  <!-- ADMIN NAVBAR -->
+<header class="sticky top-0 z-50 bg-gradient-to-r from-red-600 to-orange-500 shadow-lg">
+  <div class="max-w-7xl mx-auto px-4 py-3">
+
+    <!-- TOP BAR -->
+    <div class="flex justify-between items-center text-white font-semibold">
+      <span class="text-xl">🛠 Admin Panel</span>
+
+      <!-- MOBILE TOGGLE -->
+      <button id="adminMenuBtn"
+        class="md:hidden text-3xl focus:outline-none">
+        ☰
+      </button>
+    </div>
+
+    <!-- NAV MENU -->
+    <nav id="adminNavbar"
+      class="hidden md:flex flex-wrap gap-3 mt-4 text-white font-semibold">
+
+      <!-- COMMON BUTTON STYLE -->
+      <a href="/admin" class="nav-btn">🏠 Dashboard</a>
+      <a href="/admin/menu" class="nav-btn">🍽 Manage Menu</a>
+      <a href="/admin/analytics" class="nav-btn">📊 Analytics</a>
+      <a href="/admin/reviews" class="nav-btn bg-pink-500">⭐ Reviews</a>
+      <a href="/admin/help" class="nav-btn bg-purple-500">🆘 Help Requests</a>
+
+      <!-- DOWNLOAD MAIN -->
+      <a href="/admin/download-sales"
+        class="nav-btn bg-green-700">
+        ⬇ Download Reports
+      </a>
+
+      <!-- DOWNLOAD FILTERS -->
+      <div class="flex flex-col md:flex-row gap-2 w-full md:w-auto">
+        <a href="/admin/download-sales?period=day"
+          class="nav-btn bg-blue-500">📅 Today</a>
+
+        <a href="/admin/download-sales?period=week"
+          class="nav-btn bg-orange-500">📆 Week</a>
+
+        <a href="/admin/download-sales?period=month"
+          class="nav-btn bg-green-500">🗓 Month</a>
+      </div>
+
+      <a href="/admin-logout"
+        class="nav-btn bg-red-600">
+        🚪 Logout
+      </a>
+    </nav>
+  </div>
+</header>
+
+
+
+<!-- STATS -->
+<div class="max-w-7xl mx-auto p-6 grid grid-cols-2 md:grid-cols-5 gap-4">
+
+<div class="bg-white rounded-xl p-4 shadow text-center">
+  <p class="text-gray-500">Orders</p>
+  <h2 class="text-2xl font-bold text-red-500">{{ stats.orders or 0 }}</h2>
+</div>
+
+<div class="bg-white rounded-xl p-4 shadow text-center">
+  <p class="text-gray-500">Revenue</p>
+  <h2 class="text-2xl font-bold text-green-600">₹{{ stats.revenue or 0 }}</h2>
+</div>
+
+<div class="bg-white rounded-xl p-4 shadow text-center">
+  <p class="text-gray-500">Discount</p>
+  <h2 class="text-2xl font-bold text-orange-500">₹{{ stats.discount or 0 }}</h2>
+</div>
+
+<div class="bg-white rounded-xl p-4 shadow text-center">
+  <p class="text-gray-500">Profit</p>
+  <h2 class="text-2xl font-bold text-blue-600">₹{{ stats.profit or 0 }}</h2>
+</div>
+
+<div class="bg-white rounded-xl p-4 shadow text-center">
+  <p class="text-gray-500">Top Dish</p>
+  <h2 class="font-bold text-purple-600">{{ top_item }}</h2>
+</div>
+
+</div>
+
+<!-- ORDERS TABLE -->
+<div class="max-w-7xl mx-auto p-6">
+<h2 class="text-xl font-bold mb-3">🧾 Today Orders</h2>
+
+<div class="overflow-x-auto bg-white rounded-xl shadow">
+<table class="w-full text-sm">
+<thead class="bg-gray-100">
+<tr>
+<th class="p-2">ID</th>
+<th>Customer</th>
+<th>Table</th>
+<th>Total</th>
+<th>Status</th>
+<th>Time</th>
+</tr>
+</thead>
+
+<tbody>
+{% for o in orders %}
+<tr class="border-t">
+<td class="p-2">{{ o.id }}</td>
+<td>{{ o.customer_name }}</td>
+<td>{{ o.table_name }}</td>
+<td class="font-bold">₹{{ o.total }}</td>
+<td>
+<span class="px-2 py-1 rounded text-xs
+ {% if o.status=='Done' %}bg-green-100 text-green-700{% endif %}
+ {% if o.status=='Cooking' %}bg-orange-100 text-orange-700{% endif %}
+ {% if o.status=='Pending' %}bg-red-100 text-red-700{% endif %}
+ ">
+ {{ o.status }}
+</span>
+</td>
+<td>{{ o.created_at }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+</div>
+<script>
+const btn = document.getElementById("adminMenuBtn");
+const nav = document.getElementById("adminNavbar");
+
+btn.onclick = () => {
+  nav.classList.toggle("hidden");
+};
+</script>
+
+</body>
+</html>
