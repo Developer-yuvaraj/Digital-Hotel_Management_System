@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Non-Veg Menu</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet"
+ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+.nav-link{
+  position:relative;
+  padding-bottom:4px;
+}
+.nav-link::after{
+  content:"";
+  position:absolute;
+  left:0;
+  bottom:0;
+  width:0;
+  height:2px;
+  background:#16a34a;
+  transition:.3s;
+}
+.nav-link:hover::after,
+.nav-link.active::after{
+  width:100%;
+}
+</style>
+</head>
+
+<body class="bg-[#F3F4F5]">
+
+<!-- ================= HEADER ================= -->
+<header class="sticky top-0 z-50 bg-white shadow-md">
+  <nav class="max-w-7xl mx-auto flex items-center justify-between p-4">
+
+    <h1 class="text-xl font-bold text-red-600">Hotel Digital</h1>
+
+    <!-- DESKTOP MENU -->
+    <ul class="hidden md:flex gap-6 font-medium">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="menus.html" class="nav-link active">Menus</a></li>
+      <li><a href="review.html" class="nav-link">Reviews</a></li>
+      <li><a href="help.html" class="nav-link">Help</a></li>
+    </ul>
+
+    <!-- MOBILE HAMBURGER (ONLY ADDITION) -->
+    <button onclick="toggleMenu()" class="md:hidden text-2xl text-gray-700">
+      <i class="fas fa-bars"></i>
+    </button>
+  </nav>
+
+  <!-- MOBILE MENU -->
+  <div id="mobileMenu" class="hidden bg-white border-t shadow-md">
+    <ul class="flex flex-col items-center gap-4 py-4 font-medium">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="menus.html" class="nav-link active">Menus</a></li>
+      <li><a href="review.html" class="nav-link">Reviews</a></li>
+      <li><a href="help.html" class="nav-link">Help</a></li>
+    </ul>
+  </div>
+</header>
+
+<h2 class="text-2xl font-bold text-center mt-4">Non-Veg Menu</h2>
+
+<!-- ================= TABLE ================= -->
+<div class="flex justify-center my-4">
+  <input id="tableInput" placeholder="Table No"
+   class="border px-3 py-1 rounded w-28">
+  <button onclick="setTable()"
+   class="bg-green-600 text-white px-4 ml-2 rounded">
+   Confirm
+  </button>
+</div>
+
+<p class="text-center">Table: <span id="tableNo">0</span></p>
+
+<!-- ================= MENU GRID ================= -->
+<div id="menuGrid"
+ class="max-w-7xl mx-auto grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
+</div>
+
+<!-- ================= CART ================= -->
+<aside class="hidden md:block fixed right-0 top-24 w-72 bg-white p-4 shadow rounded-l-xl">
+  <h3 class="font-bold text-lg">Your Cart</h3>
+  <ul id="cartItems" class="text-sm space-y-1"></ul>
+  <p class="mt-2">Items: <span id="itemCount">0</span></p>
+  <p class="font-bold mt-2">Total ₹<span id="cartTotal">0</span></p>
+
+  <button onclick="placeOrder()"
+   class="w-full mt-3 bg-orange-600 text-white py-2 rounded font-semibold">
+   Place Order
+  </button>
+</aside>
+
+<!-- ================= POPUP ================= -->
+<div id="orderPopup"
+ class="fixed inset-0 hidden flex items-center justify-center bg-black/50 z-50">
+  <div class="bg-white rounded-2xl p-6 w-80 text-center shadow-2xl animate-bounce">
+    <h2 class="text-2xl font-bold text-green-600 mb-3">✅ Order Confirmed</h2>
+    <p class="text-gray-700 mb-4">Your food will be served soon 😊</p>
+    <button onclick="closePopup()"
+     class="bg-green-600 text-white px-6 py-2 rounded-lg font-semibold">
+     OK
+    </button>
+  </div>
+</div>
+
+<script>
+/* MOBILE MENU TOGGLE */
+function toggleMenu(){
+  document.getElementById("mobileMenu").classList.toggle("hidden");
+}
+
+/* 🔥 CLEAR ONLY ON FULL REFRESH */
+const nav = performance.getEntriesByType("navigation")[0];
+if (nav && nav.type === "reload") {
+  sessionStorage.removeItem("hotel_cart");
+  sessionStorage.removeItem("hotel_qty");
+}
+
+/* STATE */
+let table = "0";
+tableNo.innerText = table;
+
+/* SHARED CART */
+let cart = JSON.parse(sessionStorage.getItem("hotel_cart")) || {};
+let qty  = JSON.parse(sessionStorage.getItem("hotel_qty")) || {};
+
+/* MENU DATA */
+const menu = [
+ ["Chicken Grill",320,"chickengrill.jpeg"],
+ ["Chicken Biryani",250,"biryani.jpeg"],
+ ["Mutton Biryani",380,"muttonbiryani.jpeg"],
+ ["Chicken Fried Rice",210,"chickenfriedrice.jpeg"],
+ ["Chicken Noodles",200,"chickennoodles.jpeg"],
+ ["Chicken 65",220,"chicken65.jpeg"],
+ ["Pepper Chicken",260,"pepperchicken.jpeg"],
+ ["Chilli Chicken",240,"chillichicken.jpeg"],
+ ["Chicken Lollipop",230,"chickenlollipop.jpeg"],
+ ["Tandoori Chicken",340,"tandoorichicken.jpeg"],
+ ["Chicken Shawarma",180,"shawarma.jpeg"],
+ ["Fish Fry",280,"fishfry.jpeg"],
+ ["Fish Curry",260,"fishcurry.jpeg"],
+ ["Prawn Fry",360,"prawnfry.jpeg"],
+ ["Egg Curry",160,"eggcurry.jpeg"]
+];
+
+function setTable(){
+  const v = tableInput.value.trim();
+  if(!v || v==="0") return alert("Enter valid table number");
+  table = v;
+  tableNo.innerText = table;
+}
+
+function changeQty(name,val){
+  qty[name] = (qty[name] || 0) + val;
+  if(qty[name] <= 0){
+    delete qty[name];
+    delete cart[name];
+  }
+  document.getElementById("qty-"+name).innerText = qty[name] || 0;
+  syncCart();
+}
+
+function addToCart(name,price){
+  if(table==="0") return alert("Confirm table number first");
+  if(qty[name]){
+    cart[name] = { qty: qty[name], price };
+  }
+  syncCart();
+}
+
+function renderCart(){
+  let total=0,count=0,html="";
+  for(let i in cart){
+    const s = cart[i].qty * cart[i].price;
+    total += s;
+    count += cart[i].qty;
+    html += `<li>${i} × ${cart[i].qty} = ₹${s}</li>`;
+  }
+  cartItems.innerHTML = html;
+  cartTotal.innerText = total;
+  itemCount.innerText = count;
+}
+
+function syncCart(){
+  sessionStorage.setItem("hotel_cart", JSON.stringify(cart));
+  sessionStorage.setItem("hotel_qty", JSON.stringify(qty));
+  renderCart();
+}
+
+function placeOrder(){
+  if(table==="0") return alert("Confirm table number");
+  if(!Object.keys(cart).length) return alert("Cart empty");
+
+  const orders = JSON.parse(localStorage.getItem("hotel_orders")) || [];
+  orders.push({
+    id:Date.now(),
+    table,
+    items:cart,
+    time:new Date().toLocaleTimeString()
+  });
+  localStorage.setItem("hotel_orders", JSON.stringify(orders));
+  orderPopup.classList.remove("hidden");
+}
+
+function closePopup(){
+  orderPopup.classList.add("hidden");
+}
+
+function renderMenu(){
+  menuGrid.innerHTML="";
+  menu.forEach(([n,p,i])=>{
+    const q = qty[n] || 0;
+    menuGrid.innerHTML+=`
+    <div class="bg-white p-4 shadow rounded-xl text-center flex flex-col h-full">
+      <img src="/images/${i}" class="rounded mb-2">
+      <h3 class="font-semibold">${n}</h3>
+      <div class="font-bold">₹${p}</div>
+      <div class="flex justify-center gap-3 my-2">
+        <button onclick="changeQty('${n}',-1)" class="bg-blue-400 px-3 rounded text-white">−</button>
+        <span id="qty-${n}">${q}</span>
+        <button onclick="changeQty('${n}',1)" class="bg-red-500 px-3 rounded text-white">+</button>
+      </div>
+      <button onclick="addToCart('${n}',${p})"
+        class="bg-green-600 text-white rounded py-1 mt-auto">
+        Add to Cart
+      </button>
+    </div>`;
+  });
+}
+
+renderMenu();
+renderCart();
+</script>
+
+</body>
+</html>

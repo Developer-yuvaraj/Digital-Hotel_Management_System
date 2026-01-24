@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="min-h-screen flex items-center justify-center
+ bg-gradient-to-br from-red-100 via-orange-100 to-yellow-100">
+
+<div class="bg-white p-8 rounded-2xl shadow-2xl w-80">
+  <h2 class="text-2xl font-bold text-center text-red-500 mb-6">
+    🔐 Admin Login
+  </h2>
+
+  {% if error %}
+  <div class="bg-red-100 text-red-600 p-2 rounded mb-3 text-center text-sm">
+    {{ error }}
+  </div>
+  {% endif %}
+
+  <form method="POST">
+    <input name="username" placeholder="Username"
+     class="border p-2 w-full mb-3 rounded">
+
+    <input type="password" name="password" placeholder="Password"
+     class="border p-2 w-full mb-4 rounded">
+
+    <button
+     class="w-full bg-red-500 text-white py-2 rounded font-semibold">
+     Login
+    </button>
+  </form>
+</div>
+
+</body>
+</html>

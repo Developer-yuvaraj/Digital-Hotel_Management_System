@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin Help Requests</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gradient-to-br from-gray-100 to-gray-200 min-h-screen">
+
+<!-- HEADER -->
+<div class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-6 shadow">
+  <h1 class="text-3xl font-bold text-center">🆘 Customer Help Requests</h1>
+</div>
+
+<!-- CONTENT -->
+<div class="max-w-6xl mx-auto p-6 space-y-6">
+
+{% for r in requests %}
+<div class="bg-white rounded-2xl shadow-lg p-5 flex flex-col md:flex-row gap-4">
+
+  <!-- LEFT -->
+  <div class="flex-1">
+    <h2 class="font-bold text-lg text-indigo-600">
+      👤 {{ r.name }} | 🪑 Table {{ r.table_no }}
+    </h2>
+
+    <p class="mt-1">
+      🆘 <b>{{ r.issue_type }}</b>
+    </p>
+
+    <p class="mt-2 text-gray-700">
+      {{ r.message }}
+    </p>
+
+    <p class="text-sm text-gray-400 mt-2">
+      ⏱ {{ r.created_at }}
+    </p>
+
+    <p class="mt-2">
+      Status:
+      {% if r.status == "Resolved" %}
+        <span class="text-green-600 font-semibold">Resolved</span>
+      {% else %}
+        <span class="text-red-500 font-semibold">Pending</span>
+      {% endif %}
+    </p>
+  </div>
+
+  <!-- IMAGE -->
+  {% if r.image %}
+  <div class="w-32">
+    <img src="/static/help/{{ r.image }}"
+      class="rounded-xl shadow object-cover h-28 w-full">
+  </div>
+  {% endif %}
+
+  <!-- ACTIONS -->
+  <div class="flex md:flex-col gap-2 justify-center">
+    {% if r.status != "Resolved" %}
+    <a href="/admin/help-resolve/{{ r.id }}"
+      class="bg-green-500 text-white px-4 py-2 rounded text-sm text-center">
+      ✔ Resolve
+    </a>
+    {% endif %}
+
+    <a href="/admin/help-delete/{{ r.id }}"
+      onclick="return confirm('Delete this request?')"
+      class="bg-red-500 text-white px-4 py-2 rounded text-sm text-center">
+      🗑 Delete
+    </a>
+  </div>
+</div>
+{% else %}
+<p class="text-center text-gray-500">No help requests found.</p>
+{% endfor %}
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Menu</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gradient-to-br from-green-50 to-lime-50">
+
+
+<header class="sticky top-0 z-50 bg-gradient-to-r from-red-600 to-orange-500 shadow-lg">
+  <div class="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
+
+    <!-- LEFT : LOGO + NAV -->
+    <div class="flex items-center gap-6 text-white font-semibold">
+      <span class="text-xl">🛠 Admin Panel</span>
+
+      <a href="/admin"
+        class="px-3 py-1 rounded hover:bg-white/20 transition">
+        🏠 Dashboard
+      </a>
+
+      <a href="/admin/menu"
+        class="px-3 py-1 rounded hover:bg-white/20 transition">
+        🍽 Manage Menu
+      </a>
+
+      <a href="/admin/analytics"
+        class="px-3 py-1 rounded hover:bg-white/20 transition">
+        📊 Analytics
+      </a>
+    </div>
+
+   
+
+</header>
+
+<div class="max-w-7xl mx-auto p-6 grid md:grid-cols-3 gap-6">
+
+<!-- ADD DISH -->
+<div class="bg-white p-4 rounded-xl shadow">
+<h2 class="font-bold mb-3">➕ Add Dish</h2>
+<form method="POST" enctype="multipart/form-data"
+      class="bg-white p-4 rounded shadow space-y-3 w-96">
+
+  <input name="name"
+    placeholder="Dish name"
+    class="border p-2 w-full rounded"
+    required>
+
+  <select name="category"
+    class="border p-2 w-full rounded">
+    <option value="nonveg">Non-Veg</option>
+    <option value="veg">Veg</option>
+  </select>
+
+  <input name="price" type="number"
+    placeholder="Price"
+    class="border p-2 w-full rounded"
+    required>
+
+  <!-- 🔥 IMAGE FILE INPUT -->
+  <input type="file"
+    name="image"
+    accept="image/*"
+    class="border p-2 w-full rounded"
+    required>
+
+  <button class="bg-red-500 text-white py-2 rounded w-full">
+    Add Dish
+  </button>
+</form>
+
+</div>
+
+<!-- MENU LIST -->
+<div class="md:col-span-2 bg-white p-4 rounded-xl shadow overflow-x-auto">
+<h2 class="font-bold mb-3">📋 Menu Items</h2>
+
+<table class="w-full text-sm">
+<tr class="bg-gray-100">
+<th>ID</th><th>Name</th><th>Category</th><th>Price</th><th>Status</th><th>Action</th>
+</tr>
+
+{% for i in items %}
+<tr class="border-t">
+<form method="POST" action="/admin/menu/update">
+<td>{{ i.id }}</td>
+<td>{{ i.name }}</td>
+<td>{{ i.category }}</td>
+<td>
+<input type="number" name="price" value="{{ i.price }}"
+ class="border w-20 p-1 rounded">
+</td>
+<td>
+<select name="active" class="border p-1 rounded">
+  <option value="1" {% if i.active==1 %}selected{% endif %}>Active</option>
+  <option value="0" {% if i.active==0 %}selected{% endif %}>Inactive</option>
+</select>
+</td>
+<td>
+<input type="hidden" name="id" value="{{ i.id }}">
+<button class="bg-blue-500 text-white px-3 py-1 rounded">Save</button>
+</td>
+</form>
+</tr>
+{% endfor %}
+</table>
+</div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Customer Reviews</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+
+.star{
+  color:#d1d5db; /* gray */
+}
+.star.active{
+  color:#facc15; /* gold */
+}
+
+</style>
+</head>
+
+<body class="bg-gradient-to-br from-[#fff7ed] to-[#ffe4e6] min-h-screen">
+
+<!-- HEADER -->
+<div class="max-w-6xl mx-auto p-6 text-center">
+  <h1 class="text-3xl font-bold text-gray-800">⭐ Customer Reviews</h1>
+  <p class="text-gray-600 mt-2">Real experiences from our customers</p>
+</div>
+
+<!-- REVIEWS GRID -->
+<div class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 px-6 pb-24">
+
+{% for r in reviews %}
+<div class="bg-white rounded-2xl shadow-lg p-5">
+  <div class="flex items-center gap-3 mb-3">
+    {% if r.image %}
+    <img src="/static/reviews/{{ r.image }}"
+         class="w-12 h-12 rounded-full object-cover">
+    {% else %}
+    <div class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
+      👤
+    </div>
+    {% endif %}
+    <div>
+      <p class="font-semibold">{{ r.name }}</p>
+     <div class="flex">
+  {% for i in range(1,6) %}
+    {% if i <= r.rating %}
+      <span class="star active">★</span>
+    {% else %}
+      <span class="star">★</span>
+    {% endif %}
+  {% endfor %}
+</div>
+
+    </div>
+  </div>
+
+  <p class="text-gray-700 text-sm">{{ r.message }}</p>
+  <p class="text-xs text-gray-400 mt-3">{{ r.created_at }}</p>
+</div>
+{% endfor %}
+
+</div>
+
+<!-- FLOATING ADD REVIEW BUTTON -->
+<button onclick="openModal()"
+ class="fixed bottom-6 right-6 bg-gradient-to-r from-red-500 to-orange-500
+        text-white px-6 py-3 rounded-full shadow-xl text-lg">
+  + Add Review
+</button>
+
+<!-- MODAL -->
+<div id="reviewModal"
+ class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50">
+ <div class="bg-white w-full max-w-md rounded-2xl p-6">
+  <h2 class="text-xl font-bold mb-4 text-center">✍ Add Your Review</h2>
+
+  <form method="POST" enctype="multipart/form-data">
+    <input name="name" required
+     placeholder="Your Name"
+     class="border w-full p-2 rounded mb-2">
+
+    <!-- STAR RATING -->
+    <!-- STAR RATING -->
+<div class="flex justify-center gap-2 mb-4 text-3xl" id="starBox">
+  <input type="hidden" name="rating" id="ratingValue" required>
+
+  <span class="star cursor-pointer" data-val="1">★</span>
+  <span class="star cursor-pointer" data-val="2">★</span>
+  <span class="star cursor-pointer" data-val="3">★</span>
+  <span class="star cursor-pointer" data-val="4">★</span>
+  <span class="star cursor-pointer" data-val="5">★</span>
+</div>
+
+
+    <textarea name="message" required
+     placeholder="Write your experience..."
+     class="border w-full p-2 rounded mb-2"></textarea>
+
+    <input type="file" name="image" class="mb-3">
+
+    <button
+     class="w-full bg-gradient-to-r from-red-500 to-orange-500
+            text-white py-2 rounded">
+     Submit Review
+    </button>
+  </form>
+
+  <button onclick="closeModal()"
+   class="block mx-auto mt-3 text-gray-500">
+   Cancel
+  </button>
+ </div>
+</div>
+
+<script>
+function openModal(){
+  document.getElementById("reviewModal").classList.remove("hidden");
+  document.getElementById("reviewModal").classList.add("flex");
+}
+function closeModal(){
+  document.getElementById("reviewModal").classList.add("hidden");
+}
+
+const stars = document.querySelectorAll("#starBox .star");
+const ratingInput = document.getElementById("ratingValue");
+
+stars.forEach((star, index) => {
+  star.addEventListener("click", () => {
+    ratingInput.value = star.dataset.val;
+
+    stars.forEach((s, i) => {
+      if(i <= index){
+        s.classList.add("active");
+      }else{
+        s.classList.remove("active");
+      }
+    });
+  });
+});
+</script>
+
+
+
+</body>
+</html>

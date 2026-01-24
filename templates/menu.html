@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Hotel Digital Menu</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+  
+  /* 🚫 Prevent desktop cart flash on mobile */
+  @media (max-width: 767px){
+    #desktopCart{ display:none !important; }
+  }
+
+.card{transition:.3s}
+.card:hover{transform:translateY(-4px);box-shadow:0 12px 24px rgba(0,0,0,.12)}
+.section-title{
+  padding:14px 40px;border-radius:9999px;
+  font-size:1.75rem;font-weight:700;
+  animation:float 3s ease-in-out infinite
+}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+</style>
+</head>
+
+<body class="bg-[#FFF5EF] text-gray-800">
+
+<!-- ================= USER POPUP ================= -->
+<div id="userPopup" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center">
+  <div class="bg-white p-6 rounded-xl w-80">
+    <h2 class="text-xl font-bold text-center text-red-500 mb-3">Welcome 👋</h2>
+    <input id="uname" placeholder="Your Name" class="border p-2 w-full mb-2 rounded">
+    <input id="utable" placeholder="Table Name" class="border p-2 w-full mb-4 rounded">
+    <button onclick="saveUser()" class="bg-red-500 text-white w-full py-2 rounded font-semibold">
+      Start Ordering
+    </button>
+  </div>
+</div>
+
+<!-- ================= MENU ================= -->
+<div class="max-w-7xl mx-auto p-6">
+<div id="menuWrapper" class="blur-sm pointer-events-none">
+
+<div class="flex justify-center my-8">
+  <div class="section-title text-white bg-gradient-to-r from-red-600 to-orange-500">
+    🍗 NON-VEG SPECIALS
+  </div>
+</div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+{% for d in nonveg %}
+<div class="card bg-white rounded-xl shadow flex flex-col">
+  <img src="/static/uploads/{{ d.image_url }}" class="h-44 w-full object-cover">
+  <div class="p-4 flex flex-col flex-1">
+    <h3 class="font-semibold">{{ d.name }}</h3>
+    <p class="font-bold text-red-500">₹{{ d.price }}</p>
+
+    <div class="flex justify-center gap-3 my-2">
+      <button onclick="chg('{{ d.name }}',-1)" class="px-3 bg-gray-200 rounded">−</button>
+      <span id="q-{{ d.name|replace(' ','_') }}">0</span>
+      <button onclick="chg('{{ d.name }}',1)" class="px-3 bg-gray-200 rounded">+</button>
+    </div>
+
+  <button
+  class="add-btn mt-auto bg-red-500 text-white py-2 rounded text-sm"
+  data-name="{{ d.name }}"
+  data-price="{{ d.price }}">
+  Add
+</button>
+
+  </div>
+</div>
+{% endfor %}
+</div>
+
+<div class="flex justify-center my-10">
+  <div class="section-title text-white bg-gradient-to-r from-green-600 to-lime-500">
+    🥗 VEG SPECIALS
+  </div>
+</div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+{% for d in veg %}
+<div class="card bg-white rounded-xl shadow flex flex-col">
+  <img src="{{ d.image_url }}" class="h-44 w-full object-cover">
+  <div class="p-4 flex flex-col flex-1">
+    <h3 class="font-semibold">{{ d.name }}</h3>
+    <p class="font-bold text-green-600">₹{{ d.price }}</p>
+
+    <div class="flex justify-center gap-3 my-2">
+      <button onclick="chg('{{ d.name }}',-1)" class="px-3 bg-gray-200 rounded">−</button>
+      <span id="q-{{ d.name|replace(' ','_') }}">0</span>
+      <button onclick="chg('{{ d.name }}',1)" class="px-3 bg-gray-200 rounded">+</button>
+    </div>
+
+    <button
+  class="add-btn mt-auto bg-red-500 text-white py-2 rounded text-sm"
+  data-name="{{ d.name }}"
+  data-price="{{ d.price }}">
+  Add
+</button>
+
+  </div>
+</div>
+{% endfor %}
+</div>
+
+</div>
+</div>
+
+<!-- ================= DESKTOP CART ================= -->
+<aside id="desktopCart"
+ class="fixed top-24 right-6 w-64 bg-white shadow-xl rounded-xl p-3 z-40 text-sm hidden">
+
+  <h3 class="font-bold mb-2">🛒 Cart</h3>
+  👤 <span id="cartUser"></span><br>
+  🪑 <span id="cartTable"></span>
+
+  <ul id="cartList" class="mt-2 space-y-1"></ul>
+
+  <div class="border-t mt-2 pt-2">
+    Subtotal ₹<span id="sub">0</span><br>
+    Discount ₹<span id="dis">0</span><br>
+    GST ₹<span id="gst">0</span>
+  </div>
+
+  <p class="font-bold mt-1">Total ₹<span id="total">0</span></p>
+
+  <button onclick="placeOrder()"
+   class="w-full mt-2 bg-red-500 text-white py-2 rounded">
+   Place Order
+  </button>
+</aside>
+
+<!-- ================= MOBILE CART ================= -->
+<button id="mobileCartBtn"
+ class="md:hidden fixed bottom-5 right-5 bg-red-500 text-white p-4 rounded-full text-xl z-50">
+ 🛒
+</button>
+
+<div id="mobileCart"
+ class="fixed inset-0 bg-black/60 z-50 hidden">
+ <div class="absolute bottom-0 bg-white w-full h-[75vh] rounded-t-2xl p-4">
+  <div class="flex justify-between mb-2">
+    <b>🛒 Your Cart</b>
+    <button id="closeMobileCart">✕</button>
+  </div>
+
+  <ul id="cartListM" class="space-y-2"></ul>
+
+<div class="border-t mt-2 pt-2 text-sm space-y-1">
+  👤 <span id="mUser"></span><br>
+  🪑 <span id="mTable"></span><br><br>
+
+  Subtotal ₹<span id="subM">0</span><br>
+  Discount ₹<span id="disM">0</span><br>
+  GST ₹<span id="gstM">0</span>
+
+  <p class="font-bold mt-1">
+    Total ₹<span id="totalM">0</span>
+  </p>
+</div>
+
+
+  <button onclick="placeOrder()"
+   class="w-full mt-2 bg-red-500 text-white py-2 rounded">
+   Place Order
+  </button>
+ </div>
+</div>
+
+<!-- ================= JAVASCRIPT ================= -->
+<script>
+/* ================= GLOBAL STATE ================= */
+let qty = {};
+let cart = {};
+let user = null;
+
+// 🔥 FORCE HIDE DESKTOP CART ON FIRST LOAD (MOBILE)
+document.addEventListener("DOMContentLoaded", () => {
+  if (window.innerWidth < 768) {
+    const dc = document.getElementById("desktopCart");
+    if (dc) dc.classList.add("hidden");
+  }
+});
+
+function handleCartVisibility(){
+  const desktopCart = document.getElementById("desktopCart");
+
+  if(!desktopCart) return;
+
+  if(window.innerWidth >= 768 && user){
+    desktopCart.classList.remove("hidden"); // 💻 desktop
+  } else {
+    desktopCart.classList.add("hidden");    // 📱 mobile
+  }
+}
+
+/* ================= USER ================= */
+function saveUser(){
+  if(!uname.value || !utable.value){
+    alert("Enter name and table");
+    return;
+  }
+  user = { name: uname.value, table: utable.value };
+  sessionStorage.setItem("user", JSON.stringify(user));
+  unlock();
+}
+
+function unlock(){
+  userPopup.style.display = "none";
+  menuWrapper.classList.remove("blur-sm","pointer-events-none");
+
+  cartUser.innerText = user.name;
+  cartTable.innerText = user.table;
+
+  handleCartVisibility();
+}
+
+
+/* ================= QTY ================= */
+function chg(name, val){
+  qty[name] = (qty[name] || 0) + val;
+  if(qty[name] < 0) qty[name] = 0;
+
+  const el = document.getElementById(
+    "q-" + name.replace(/ /g,"_")
+  );
+  if(el) el.innerText = qty[name];
+}
+
+/* ================= ADD ================= */
+function add(name, price){
+  if(!qty[name]){
+    alert("Quantity select pannunga");
+    return;
+  }
+
+  cart[name] = {
+    qty: qty[name],
+    price: price
+  };
+  renderCart();
+}
+
+/* ================= DELETE ================= */
+function del(name){
+  delete cart[name];
+  qty[name] = 0;
+
+  const el = document.getElementById(
+    "q-" + name.replace(/ /g,"_")
+  );
+  if(el) el.innerText = 0;
+
+  renderCart();
+}
+
+/* ================= CART RENDER ================= */
+function renderCart(){
+  let subtotal = 0;
+  let html = "";
+
+  for(let k in cart){
+    let line = cart[k].qty * cart[k].price;
+    subtotal += line;
+
+    html += `
+      <li class="flex justify-between items-center">
+        ${k} × ${cart[k].qty}
+        <button onclick="del('${k}')" class="text-red-500">✖</button>
+      </li>
+    `;
+  }
+
+  let discount = Math.round(subtotal * 0.10);
+  let gstAmt = Math.round((subtotal - discount) * 0.05);
+  let totalAmt = subtotal - discount + gstAmt;
+
+  /* DESKTOP */
+  cartList.innerHTML = html || "Empty";
+  sub.innerText = subtotal;
+  dis.innerText = discount;
+  gst.innerText = gstAmt;
+  total.innerText = totalAmt;
+
+  /* MOBILE */
+  cartListM.innerHTML = cartList.innerHTML;
+  subM.innerText = subtotal;
+  disM.innerText = discount;
+  gstM.innerText = gstAmt;
+  totalM.innerText = totalAmt;
+
+  mUser.innerText = user.name;
+  mTable.innerText = user.table;
+}
+
+/* ================= ORDER ================= */
+function placeOrder(){
+  if(Object.keys(cart).length === 0){
+    alert("Cart empty");
+    return;
+  }
+
+  fetch("/api/place-order",{
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body:JSON.stringify({
+      name:user.name,
+      table:user.table,
+      items:cart,
+      subtotal:Number(sub.innerText),
+      discount:Number(dis.innerText),
+      gst:Number(gst.innerText),
+      total:Number(total.innerText)
+    })
+  })
+  .then(r=>r.json())
+  .then(d=>{
+    window.location.href = "/order-status/" + d.order_id;
+  });
+}
+
+/* ================= MOBILE CART ================= */
+document.addEventListener("DOMContentLoaded",()=>{
+
+  mobileCartBtn.onclick = () => {
+    mobileCart.classList.remove("hidden");
+  };
+
+  closeMobileCart.onclick = () => {
+    mobileCart.classList.add("hidden");
+  };
+
+  /* AUTO LOGIN */
+  if(sessionStorage.getItem("user")){
+    user = JSON.parse(sessionStorage.getItem("user"));
+    unlock();
+  }
+
+  /* ADD BUTTON (dataset support) */
+  document.addEventListener("click", e=>{
+    if(e.target.classList.contains("add-btn")){
+      const name = e.target.dataset.name;
+      const price = Number(e.target.dataset.price);
+      add(name, price);
+    }
+  });
+
+});
+</script>
+
+
+</body>
+</html>
