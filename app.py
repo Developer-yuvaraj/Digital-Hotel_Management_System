@@ -522,19 +522,19 @@ def admin_reviews():
 
 
 #---------------=========hide/sh0w-------#
-@app.route("/admin/review-toggle/<int:id>")
-def toggle_review(id):
-    if not session.get("admin_logged_in"):
-        return redirect("/admin_login")
-
+@app.route("/admin/review-toggle/<int:review_id>")
+def toggle_review(review_id):
     db = get_db()
-    r = db.execute("SELECT visible FROM reviews WHERE id=?", (id,)).fetchone()
-
-    new_status = 0 if r["visible"] == 1 else 1
-    db.execute("UPDATE reviews SET visible=? WHERE id=?", (new_status, id))
-    db.commit()
-
-    return redirect("/admin/reviews")
+    # தற்போதைய ஸ்டேட்டஸை எடுக்கவும்
+    review = db.execute("SELECT visible FROM reviews WHERE id = ?", (review_id,)).fetchone()
+    
+    if review:
+        # 1-ஆக இருந்தால் 0-ஆக மாற்றும், 0-ஆக இருந்தால் 1-ஆக மாற்றும்
+        new_status = 0 if review['visible'] == 1 else 1
+        db.execute("UPDATE reviews SET visible = ? WHERE id = ?", (new_status, review_id))
+        db.commit()
+    
+    return redirect("/admin/reviews") # உங்கள் அட்மின் ரிவியூ பக்கத்தின் URL-க்கு மாற்றவும்
 
 
 #================delete==============#
@@ -565,7 +565,7 @@ def user_reviews():
 
         if image_file and image_file.filename != "":
             filename = datetime.now().strftime("%Y%m%d%H%M%S_") + image_file.filename
-            image_file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+            image_file.save(os.path.join(app.config["REVIEW_UPLOAD_FOLDER"], filename))
 
         db.execute("""
             INSERT INTO reviews (name, rating, message, image, visible, created_at)
